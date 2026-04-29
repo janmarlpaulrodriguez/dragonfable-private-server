@@ -49,9 +49,10 @@ enum Output {
             };
         } else {
             \http_response_code(500);
+            $safeMessage = \htmlspecialchars($exception->getMessage(), \ENT_XML1 | \ENT_QUOTES, 'UTF-8');
             match($this) {
                 Output::NINJA2STR => $this->ninja2($exception->getMessage()),
-                Output::NINJA2XML, Output::XML => $this->xml(new \SimpleXMLElement("<error>{$exception->getMessage()}</error>")),
+                Output::NINJA2XML, Output::XML => $this->xml(new \SimpleXMLElement("<error>{$safeMessage}</error>")),
                 Output::FORM => $this->form(["error" => $exception->getMessage()]),
                 Output::RAW, Output::HTML => $this->raw($exception->getMessage()),
                 Output::REDIRECT_301, Output::REDIRECT_302 => $this->redirect(302, "/error/500?".\http_build_query(["error" => $exception->getMessage()])),

@@ -27,11 +27,13 @@ enum Input {
 
     private function ninja2(): \SimpleXMLElement {
         $xml = \file_get_contents("php://input");
-        if(\preg_match('/^<ninja2>(.+)<\/ninja2>$/', $xml, $matches)) {
+        if(\preg_match('/^<ninja2>(.+)<\/ninja2>$/s', $xml, $matches)) {
             $ninja2 = new DragonFableNinja2;
             $xml = $ninja2->decrypt($matches[1]);
         }
+        \libxml_use_internal_errors(true);
         $output = \simplexml_load_string($xml);
+        \libxml_clear_errors();
         if($output===false) {
             throw new \Exception("Invalid input Ninja2 XML: {$xml}");
         }
@@ -40,7 +42,9 @@ enum Input {
 
     private function xml(): \SimpleXMLElement {
         $xml = \file_get_contents("php://input");
+        \libxml_use_internal_errors(true);
         $output = \simplexml_load_string($xml);
+        \libxml_clear_errors();
         if($output===false) {
             throw new \Exception("Invalid input XML: {$xml}");
         }
