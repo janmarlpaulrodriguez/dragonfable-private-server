@@ -19,3 +19,4 @@ $config["DB_OPTIONS"] = \json_encode([
 
 $config["DF_SETTINGS_ID"] = 1;               # Optional, default 1
 $config["DF_NINJA2_KEY"]  = "ZorbakOwnsYou"; # Optional, default "ZorbakOwnsYou"
+$config["ADMIN_PASSWORD"] = "admin";          # Change this! Admin panel password
