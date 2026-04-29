@@ -69,4 +69,41 @@ class AdminService extends Service {
             $this->storage->update('user', $update);
         }
     }
+
+    public function getSettings(): array {
+        global $config;
+        $id = (int)($config['DF_SETTINGS_ID'] ?? 1);
+        $rows = $this->storage->select('settings', ['id' => $id]);
+        return $rows[0] ?? [];
+    }
+
+    public function updateSettings(array $fields): void {
+        global $config;
+        $id = (int)($config['DF_SETTINGS_ID'] ?? 1);
+
+        $allowed = [
+            'serverName', 'news', 'signUpMessage',
+            'experienceMultiplier', 'goldMultiplier', 'gemsMultiplier', 'silverMultiplier',
+            'dailyQuestCoinsReward',
+            'dragonAmuletForAll', 'enableAdvertising',
+            'revalidateClientValues', 'banInvalidClientValues', 'canDeleteUpgradedChar',
+            'nonUpgradedChars', 'upgradedChars',
+            'nonUpgradedMaxBagSlots', 'upgradedMaxBagSlots',
+            'nonUpgradedMaxBankSlots', 'upgradedMaxBankSlots',
+            'nonUpgradedMaxHouseSlots', 'upgradedMaxHouseSlots',
+            'nonUpgradedMaxHouseItemSlots', 'upgradedMaxHouseItemSlots',
+            'onlineThreshold',
+            'sendEmails', 'emailApiUrl', 'emailApiToken', 'emailAddress',
+        ];
+
+        $update = ['id' => $id];
+        foreach ($allowed as $field) {
+            if (\array_key_exists($field, $fields)) {
+                $update[$field] = $fields[$field];
+            }
+        }
+        if (\count($update) > 1) {
+            $this->storage->update('settings', $update);
+        }
+    }
 }

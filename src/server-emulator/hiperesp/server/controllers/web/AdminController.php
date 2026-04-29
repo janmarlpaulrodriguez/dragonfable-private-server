@@ -63,8 +63,9 @@ class AdminController extends Controller {
             th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #2a1a08}
             th{color:#f0a500;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
             tr:hover{background:#221508}
-            input,select{background:#0f0a02;border:1px solid #3a2510;color:#e8d9b0;padding:6px 10px;border-radius:4px;width:100%}
-            input:focus,select:focus{outline:1px solid #f0a500}
+            input[type=text],input[type=number],input[type=password],input[type=email],textarea,select{background:#0f0a02;border:1px solid #3a2510;color:#e8d9b0;padding:6px 10px;border-radius:4px;width:100%}
+            input:focus,textarea:focus,select:focus{outline:1px solid #f0a500}
+            textarea{resize:vertical;min-height:60px}
             .btn{background:#5a3a10;color:#e8d9b0;border:none;padding:7px 16px;border-radius:4px;cursor:pointer;font-size:.9rem}
             .btn:hover{background:#7a5a20}
             .btn-danger{background:#6b1a1a;color:#e8d9b0;border:none;padding:7px 16px;border-radius:4px;cursor:pointer;font-size:.9rem}
@@ -72,8 +73,10 @@ class AdminController extends Controller {
             .btn-success{background:#1a4a1a;color:#e8d9b0;border:none;padding:7px 16px;border-radius:4px;cursor:pointer;font-size:.9rem}
             .btn-success:hover{background:#2a6a2a}
             .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+            .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
             .field{margin-bottom:12px}
             .field label{display:block;font-size:.85rem;color:#a89060;margin-bottom:4px}
+            .field-hint{font-size:.78rem;color:#7a6040;margin-top:3px}
             .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.78rem}
             .badge-da{background:#4a2a80;color:#d0a0ff}
             .badge-upgraded{background:#1a4a1a;color:#80ff80}
@@ -83,12 +86,17 @@ class AdminController extends Controller {
             .flash.error{background:#4a1a1a;border-color:#6a2a2a;color:#d08080}
             .search-row{display:flex;gap:8px;margin-bottom:16px}
             .search-row input{flex:1}
+            .toggle-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #2a1a08}
+            .toggle-row:last-child{border-bottom:none}
+            .toggle-row label{flex:1;cursor:pointer}
+            .toggle-row .hint{font-size:.78rem;color:#7a6040}
         </style>
         </head>
         <body>
         <header>
             <h1>⚔ DFPS Admin</h1>
-            <a href="./">Dashboard</a>
+            <a href="./">Users</a>
+            <a href="settings">Settings</a>
             {$logoutForm}
         </header>
         <div class="container">
@@ -304,6 +312,121 @@ class AdminController extends Controller {
         $_SESSION['flash'] = ['type' => 'ok', 'msg' => 'Account updated successfully.'];
         \http_response_code(302);
         \header("Location: ../user?id={$userId}");
+        return '';
+    }
+
+    #[Request(endpoint: '/admin/settings', inputType: Input::NONE, outputType: Output::HTML)]
+    public function settings(): string {
+        if ($guard = $this->requireAuth()) return $guard;
+
+        $flash = '';
+        if (!empty($_SESSION['flash'])) {
+            $type  = $_SESSION['flash']['type'] === 'error' ? 'error' : '';
+            $flash = "<div class=\"flash {$type}\">{$_SESSION['flash']['msg']}</div>";
+            unset($_SESSION['flash']);
+        }
+
+        $s = $this->adminService->getSettings();
+        $v = fn(string $k) => \htmlspecialchars((string)($s[$k] ?? ''));
+        $chk = fn(string $k) => ($s[$k] ?? 0) ? 'checked' : '';
+
+        return $this->layout('Settings', <<<HTML
+        {$flash}
+        <form method="post" action="settings/update">
+
+        <div class="card">
+            <h2>Rates &amp; Rewards</h2>
+            <div class="grid-3">
+                <div class="field"><label>Gold Multiplier</label><input type="number" name="goldMultiplier" value="{$v('goldMultiplier')}" step="0.1" min="0"><p class="field-hint">Default: 1×</p></div>
+                <div class="field"><label>Experience Multiplier</label><input type="number" name="experienceMultiplier" value="{$v('experienceMultiplier')}" step="0.1" min="0"><p class="field-hint">Default: 1×</p></div>
+                <div class="field"><label>Gems Multiplier</label><input type="number" name="gemsMultiplier" value="{$v('gemsMultiplier')}" step="0.1" min="0"><p class="field-hint">Default: 1×</p></div>
+                <div class="field"><label>Silver Multiplier</label><input type="number" name="silverMultiplier" value="{$v('silverMultiplier')}" step="0.1" min="0"><p class="field-hint">Default: 1×</p></div>
+                <div class="field"><label>Daily Quest Coins Reward</label><input type="number" name="dailyQuestCoinsReward" value="{$v('dailyQuestCoinsReward')}" min="0"><p class="field-hint">Dragon Coins per daily quest</p></div>
+                <div class="field"><label>Online Threshold (minutes)</label><input type="number" name="onlineThreshold" value="{$v('onlineThreshold')}" min="1"><p class="field-hint">Inactivity before shown as offline</p></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Account Limits</h2>
+            <div class="grid-2">
+                <div>
+                    <p style="color:#a89060;font-size:.85rem;margin-bottom:10px">Free accounts</p>
+                    <div class="field"><label>Max Characters</label><input type="number" name="nonUpgradedChars" value="{$v('nonUpgradedChars')}" min="1"></div>
+                    <div class="field"><label>Max Bag Slots</label><input type="number" name="nonUpgradedMaxBagSlots" value="{$v('nonUpgradedMaxBagSlots')}" min="1"></div>
+                    <div class="field"><label>Max Bank Slots</label><input type="number" name="nonUpgradedMaxBankSlots" value="{$v('nonUpgradedMaxBankSlots')}" min="0"></div>
+                    <div class="field"><label>Max House Slots</label><input type="number" name="nonUpgradedMaxHouseSlots" value="{$v('nonUpgradedMaxHouseSlots')}" min="0"></div>
+                    <div class="field"><label>Max House Item Slots</label><input type="number" name="nonUpgradedMaxHouseItemSlots" value="{$v('nonUpgradedMaxHouseItemSlots')}" min="0"></div>
+                </div>
+                <div>
+                    <p style="color:#a89060;font-size:.85rem;margin-bottom:10px">Dragon Amulet (upgraded) accounts</p>
+                    <div class="field"><label>Max Characters</label><input type="number" name="upgradedChars" value="{$v('upgradedChars')}" min="1"></div>
+                    <div class="field"><label>Max Bag Slots</label><input type="number" name="upgradedMaxBagSlots" value="{$v('upgradedMaxBagSlots')}" min="1"></div>
+                    <div class="field"><label>Max Bank Slots</label><input type="number" name="upgradedMaxBankSlots" value="{$v('upgradedMaxBankSlots')}" min="0"></div>
+                    <div class="field"><label>Max House Slots</label><input type="number" name="upgradedMaxHouseSlots" value="{$v('upgradedMaxHouseSlots')}" min="0"></div>
+                    <div class="field"><label>Max House Item Slots</label><input type="number" name="upgradedMaxHouseItemSlots" value="{$v('upgradedMaxHouseItemSlots')}" min="0"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Server Behaviour</h2>
+            <div class="toggle-row"><input type="checkbox" name="dragonAmuletForAll" value="1" {$chk('dragonAmuletForAll')} style="width:auto"><label>Dragon Amulet for all players</label><span class="hint">Gives every account DA regardless of upgrade status</span></div>
+            <div class="toggle-row"><input type="checkbox" name="enableAdvertising" value="1" {$chk('enableAdvertising')} style="width:auto"><label>Enable advertising</label><span class="hint">Show ads in game client</span></div>
+            <div class="toggle-row"><input type="checkbox" name="canDeleteUpgradedChar" value="1" {$chk('canDeleteUpgradedChar')} style="width:auto"><label>Allow deleting upgraded characters</label></div>
+            <div class="toggle-row"><input type="checkbox" name="revalidateClientValues" value="1" {$chk('revalidateClientValues')} style="width:auto"><label>Revalidate client values</label><span class="hint">Recalculate stats server-side</span></div>
+            <div class="toggle-row"><input type="checkbox" name="banInvalidClientValues" value="1" {$chk('banInvalidClientValues')} style="width:auto"><label>Ban on invalid client values</label><span class="hint">Auto-ban if server detects cheating</span></div>
+        </div>
+
+        <div class="card">
+            <h2>Server Info &amp; Messages</h2>
+            <div class="field"><label>Server Name</label><input type="text" name="serverName" value="{$v('serverName')}"></div>
+            <div class="field"><label>News (shown on login screen)</label><textarea name="news" rows="4">{$v('news')}</textarea></div>
+            <div class="field"><label>Sign-up Message</label><textarea name="signUpMessage" rows="3">{$v('signUpMessage')}</textarea></div>
+        </div>
+
+        <div class="card">
+            <h2>Email</h2>
+            <div class="toggle-row" style="margin-bottom:12px"><input type="checkbox" name="sendEmails" value="1" {$chk('sendEmails')} style="width:auto"><label>Send emails (password recovery etc.)</label></div>
+            <div class="grid-2">
+                <div class="field"><label>API URL</label><input type="text" name="emailApiUrl" value="{$v('emailApiUrl')}"></div>
+                <div class="field"><label>API Token</label><input type="text" name="emailApiToken" value="{$v('emailApiToken')}"></div>
+                <div class="field"><label>From Address</label><input type="email" name="emailAddress" value="{$v('emailAddress')}"></div>
+            </div>
+        </div>
+
+        <button class="btn-success btn" style="margin-bottom:32px">Save Settings</button>
+        </form>
+        HTML);
+    }
+
+    #[Request(endpoint: '/admin/settings/update', inputType: Input::FORM, outputType: Output::HTML)]
+    public function updateSettings(array $input): string {
+        if ($guard = $this->requireAuth()) return $guard;
+
+        $bools = ['dragonAmuletForAll', 'enableAdvertising', 'canDeleteUpgradedChar',
+                  'revalidateClientValues', 'banInvalidClientValues', 'sendEmails'];
+        $floats = ['goldMultiplier', 'experienceMultiplier', 'gemsMultiplier', 'silverMultiplier'];
+        $ints   = ['dailyQuestCoinsReward', 'onlineThreshold',
+                   'nonUpgradedChars', 'upgradedChars',
+                   'nonUpgradedMaxBagSlots', 'upgradedMaxBagSlots',
+                   'nonUpgradedMaxBankSlots', 'upgradedMaxBankSlots',
+                   'nonUpgradedMaxHouseSlots', 'upgradedMaxHouseSlots',
+                   'nonUpgradedMaxHouseItemSlots', 'upgradedMaxHouseItemSlots'];
+
+        $fields = [];
+        foreach ($bools  as $k) $fields[$k] = isset($input[$k]) ? 1 : 0;
+        foreach ($floats as $k) $fields[$k] = isset($input[$k]) ? \max(0.0, (float)$input[$k]) : 1.0;
+        foreach ($ints   as $k) $fields[$k] = isset($input[$k]) ? \max(0, (int)$input[$k]) : 0;
+
+        foreach (['serverName', 'news', 'signUpMessage', 'emailApiUrl', 'emailApiToken', 'emailAddress'] as $k) {
+            if (isset($input[$k])) $fields[$k] = $input[$k];
+        }
+
+        $this->adminService->updateSettings($fields);
+
+        $_SESSION['flash'] = ['type' => 'ok', 'msg' => 'Settings saved.'];
+        \http_response_code(302);
+        \header('Location: ../settings');
         return '';
     }
 
