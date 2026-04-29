@@ -58,7 +58,7 @@ class AdminService extends Service {
     }
 
     public function updateUser(int $userId, array $fields): void {
-        $allowed = ['upgraded', 'banned', 'activated'];
+        $allowed = ['upgraded', 'special', 'banned', 'activated'];
         $update = ['id' => $userId];
         foreach ($allowed as $field) {
             if (\array_key_exists($field, $fields)) {

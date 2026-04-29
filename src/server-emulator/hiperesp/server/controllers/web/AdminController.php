@@ -218,6 +218,7 @@ class AdminController extends Controller {
         }
 
         $upgradedChecked  = $user->upgraded  ? 'checked' : '';
+        $specialChecked   = $user->special   ? 'checked' : '';
         $bannedChecked    = $user->banned    ? 'checked' : '';
         $activatedChecked = $user->activated ? 'checked' : '';
 
@@ -261,7 +262,8 @@ class AdminController extends Controller {
             <form method="post" action="user/update">
                 <input type="hidden" name="userId" value="{$userId}">
                 <div style="display:flex;gap:24px;flex-wrap:wrap">
-                    <label><input type="checkbox" name="upgraded" value="1" {$upgradedChecked} style="width:auto;margin-right:6px">Dragon Amulet Account (Upgraded)</label>
+                    <label><input type="checkbox" name="upgraded" value="1" {$upgradedChecked} style="width:auto;margin-right:6px">Dragon Amulet (Upgraded)</label>
+                    <label><input type="checkbox" name="special" value="1" {$specialChecked} style="width:auto;margin-right:6px">Guardian (Special)</label>
                     <label><input type="checkbox" name="activated" value="1" {$activatedChecked} style="width:auto;margin-right:6px">Email Activated</label>
                     <label><input type="checkbox" name="banned" value="1" {$bannedChecked} style="width:auto;margin-right:6px">Banned</label>
                 </div>
@@ -305,6 +307,7 @@ class AdminController extends Controller {
 
         $this->adminService->updateUser($userId, [
             'upgraded'  => isset($input['upgraded'])  ? 1 : 0,
+            'special'   => isset($input['special'])   ? 1 : 0,
             'activated' => isset($input['activated']) ? 1 : 0,
             'banned'    => isset($input['banned'])    ? 1 : 0,
         ]);
