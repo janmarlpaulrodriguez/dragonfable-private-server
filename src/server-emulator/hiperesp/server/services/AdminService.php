@@ -3,10 +3,13 @@ namespace hiperesp\server\services;
 
 use hiperesp\server\attributes\Inject;
 use hiperesp\server\exceptions\DFException;
+use hiperesp\server\models\CharacterItemModel;
 use hiperesp\server\models\CharacterModel;
+use hiperesp\server\models\ItemModel;
 use hiperesp\server\models\UserModel;
 use hiperesp\server\storage\Storage;
 use hiperesp\server\vo\CharacterVO;
+use hiperesp\server\vo\ItemVO;
 use hiperesp\server\vo\UserVO;
 
 class AdminService extends Service {
@@ -14,6 +17,8 @@ class AdminService extends Service {
     #[Inject] private Storage $storage;
     #[Inject] private UserModel $userModel;
     #[Inject] private CharacterModel $characterModel;
+    #[Inject] private CharacterItemModel $characterItemModel;
+    #[Inject] private ItemModel $itemModel;
 
     /** @return array<UserVO> */
     public function getAllUsers(): array {
@@ -67,6 +72,47 @@ class AdminService extends Service {
         }
         if (\count($update) > 1) {
             $this->storage->update('user', $update);
+        }
+    }
+
+    /** @return array<ItemVO> */
+    public function searchItems(string $query): array {
+        $query = \strtolower(\trim($query));
+        if ($query === '') return [];
+        $rows = $this->storage->select('item', [], null);
+        $results = \array_values(\array_filter(
+            \array_map(fn($r) => new ItemVO($r), $rows),
+            fn($i) => \str_contains(\strtolower($i->name), $query)
+        ));
+        return \array_slice($results, 0, 30);
+    }
+
+    public function getItemById(int $id): ItemVO {
+        return $this->itemModel->getById($id);
+    }
+
+    public function giveItemToChar(int $charId, int $itemId, int $quantity): void {
+        $char = $this->characterModel->getById($charId);
+        $item = $this->itemModel->getById($itemId);
+        $quantity = \max(1, $quantity);
+
+        if ($item->maxStackSize > 1) {
+            $existing = $this->storage->select('char_item', ['charId' => $char->id, 'itemId' => $item->id]);
+            if (isset($existing[0])) {
+                $row = $existing[0];
+                $row['count'] = \min($item->maxStackSize, $row['count'] + $quantity);
+                $this->storage->update('char_item', $row);
+            } else {
+                $this->storage->insert('char_item', [
+                    'charId' => $char->id,
+                    'itemId' => $item->id,
+                    'count'  => \min($item->maxStackSize, $quantity),
+                ]);
+            }
+        } else {
+            for ($i = 0; $i < $quantity; $i++) {
+                $this->characterItemModel->addItemToChar($char, $item);
+            }
         }
     }
 

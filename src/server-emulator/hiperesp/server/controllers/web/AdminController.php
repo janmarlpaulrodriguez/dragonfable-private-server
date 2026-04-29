@@ -91,6 +91,41 @@ class AdminController extends Controller {
             .toggle-row label{flex:1;cursor:pointer}
             .toggle-row .hint{font-size:.78rem;color:#7a6040}
         </style>
+        <script>
+        let dfSearchTimer = {};
+        function dfSearchItems(cId) {
+            clearTimeout(dfSearchTimer[cId]);
+            dfSearchTimer[cId] = setTimeout(async () => {
+                const q = document.getElementById('isearch-' + cId).value.trim();
+                const box = document.getElementById('iresults-' + cId);
+                if (q.length < 2) { box.style.display = 'none'; box.innerHTML = ''; return; }
+                const items = await fetch('item-search?q=' + encodeURIComponent(q)).then(r => r.json());
+                if (!items.length) {
+                    box.innerHTML = '<p style="padding:8px 12px;color:#a89060;font-size:.85rem">No items found.</p>';
+                } else {
+                    box.innerHTML = items.map(i => {
+                        const stack = i.maxStackSize > 1 ? ' <span style="color:#7a6040;font-size:.78rem">(stack ×' + i.maxStackSize + ')</span>' : '';
+                        return '<div style="padding:7px 12px;cursor:pointer;border-bottom:1px solid #2a1a08" onmouseover="this.style.background=\'#221508\'" onmouseout="this.style.background=\'\'" onclick="dfSelectItem(' + cId + ',' + i.id + ',' + JSON.stringify(i.name) + ')">' + i.name + stack + '</div>';
+                    }).join('');
+                }
+                box.style.display = 'block';
+            }, 250);
+        }
+        function dfSelectItem(cId, itemId, itemName) {
+            const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
+            document.getElementById('isearch-' + cId).value = itemName;
+            document.getElementById('iresults-' + cId).style.display = 'none';
+            document.getElementById('iid-' + cId).value = itemId;
+            document.getElementById('iqtyhidden-' + cId).value = qty;
+            document.getElementById('iname-' + cId).textContent = 'Give "' + itemName + '" × ' + qty + '?';
+            document.getElementById('igive-' + cId).style.display = '';
+        }
+        function dfCancelGive(cId) {
+            document.getElementById('igive-' + cId).style.display = 'none';
+            document.getElementById('isearch-' + cId).value = '';
+            document.getElementById('iresults-' + cId).style.display = 'none';
+        }
+        </script>
         </head>
         <body>
         <header>
@@ -225,11 +260,12 @@ class AdminController extends Controller {
         $charCards = '';
         foreach ($chars as $c) {
             $daChecked = $c->dragonAmulet ? 'checked' : '';
+            $cId = $c->id;
             $charCards .= <<<HTML
             <div class="card">
-                <h2>Character: {$c->name} (ID #{$c->id})</h2>
+                <h2>Character: {$c->name} (ID #{$cId})</h2>
                 <form method="post" action="char/update">
-                    <input type="hidden" name="charId" value="{$c->id}">
+                    <input type="hidden" name="charId" value="{$cId}">
                     <input type="hidden" name="userId" value="{$userId}">
                     <div class="grid-2">
                         <div class="field"><label>Gold</label><input type="number" name="gold" value="{$c->gold}" min="0"></div>
@@ -246,6 +282,25 @@ class AdminController extends Controller {
                     </div>
                     <button class="btn-success btn" style="margin-top:12px">Save Character</button>
                 </form>
+                <div style="border-top:1px solid #3a2510;margin-top:16px;padding-top:16px">
+                    <p style="color:#f0a500;font-size:.9rem;margin-bottom:10px">Give Item</p>
+                    <div style="display:flex;gap:8px;margin-bottom:6px">
+                        <input type="text" id="isearch-{$cId}" placeholder="Search item name…" oninput="dfSearchItems({$cId})" autocomplete="off">
+                        <input type="number" id="iqty-{$cId}" value="1" min="1" max="10000" style="width:80px">
+                    </div>
+                    <div id="iresults-{$cId}" style="border:1px solid #3a2510;border-radius:4px;max-height:180px;overflow-y:auto;display:none"></div>
+                    <form method="post" action="char/give-item" id="igive-{$cId}" style="display:none;margin-top:8px">
+                        <input type="hidden" name="charId" value="{$cId}">
+                        <input type="hidden" name="userId" value="{$userId}">
+                        <input type="hidden" name="itemId" id="iid-{$cId}">
+                        <input type="hidden" name="quantity" id="iqtyhidden-{$cId}">
+                        <div style="display:flex;align-items:center;gap:8px;background:#221508;padding:8px 12px;border-radius:4px">
+                            <span id="iname-{$cId}" style="flex:1;font-size:.9rem"></span>
+                            <button type="submit" class="btn-success btn">Give</button>
+                            <button type="button" class="btn" onclick="dfCancelGive({$cId})">✕</button>
+                        </div>
+                    </form>
+                </div>
             </div>
             HTML;
         }
@@ -430,6 +485,40 @@ class AdminController extends Controller {
         $_SESSION['flash'] = ['type' => 'ok', 'msg' => 'Settings saved.'];
         \http_response_code(302);
         \header('Location: ../settings');
+        return '';
+    }
+
+    #[Request(endpoint: '/admin/item-search', inputType: Input::QUERY, outputType: Output::JSON)]
+    public function itemSearch(array $input): array {
+        if (!$this->isLoggedIn()) return [];
+        $items = $this->adminService->searchItems($input['q'] ?? '');
+        return \array_map(fn($i) => [
+            'id'           => $i->id,
+            'name'         => $i->name,
+            'description'  => $i->description,
+            'maxStackSize' => $i->maxStackSize,
+        ], $items);
+    }
+
+    #[Request(endpoint: '/admin/char/give-item', inputType: Input::FORM, outputType: Output::HTML)]
+    public function giveItem(array $input): string {
+        if ($guard = $this->requireAuth()) return $guard;
+
+        $charId   = (int)($input['charId']   ?? 0);
+        $userId   = (int)($input['userId']   ?? 0);
+        $itemId   = (int)($input['itemId']   ?? 0);
+        $quantity = (int)($input['quantity'] ?? 1);
+
+        try {
+            $this->adminService->giveItemToChar($charId, $itemId, $quantity);
+            $item = $this->adminService->getItemById($itemId);
+            $_SESSION['flash'] = ['type' => 'ok', 'msg' => "Gave {$quantity}× {$item->name} to character #{$charId}."];
+        } catch (\Throwable $e) {
+            $_SESSION['flash'] = ['type' => 'error', 'msg' => 'Failed to give item: ' . \htmlspecialchars($e->getMessage())];
+        }
+
+        \http_response_code(302);
+        \header("Location: ../../user?id={$userId}");
         return '';
     }
 
