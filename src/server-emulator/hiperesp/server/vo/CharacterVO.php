@@ -128,7 +128,9 @@ class CharacterVO extends ValueObject implements Bannable {
 
     public int $accessLevel {
         get {
-            return $this->dragonAmulet ? 1 : 0;
+            if ($this->dragonAmulet) return 1;
+            if ($this->getUser()->special) return 1;
+            return 0;
         }
     }
 
