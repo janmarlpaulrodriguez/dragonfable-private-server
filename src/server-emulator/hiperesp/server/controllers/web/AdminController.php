@@ -261,6 +261,8 @@ class AdminController extends Controller {
         foreach ($chars as $c) {
             $daChecked = $c->dragonAmulet ? 'checked' : '';
             $cId = $c->id;
+            $armorVal0 = \base_convert(\substr($c->armor, 0, 1), 36, 10);
+            $armorPreview = \substr($c->armor, 0, 10) . '...';
             $charCards .= <<<HTML
             <div class="card">
                 <h2>Character: {$c->name} (ID #{$cId})</h2>
@@ -282,6 +284,24 @@ class AdminController extends Controller {
                     </div>
                     <button class="btn-success btn" style="margin-top:12px">Save Character</button>
                 </form>
+                <div style="border-top:1px solid #3a2510;margin-top:16px;padding-top:16px">
+                    <p style="color:#f0a500;font-size:.9rem;margin-bottom:10px">Guardian Armor String</p>
+                    <p style="color:#a89060;font-size:.85rem;margin-bottom:8px">strArmor[0]={$armorVal0} &nbsp; ({$armorPreview})</p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <form method="post" action="char/init-guardian-armor" style="display:inline">
+                            <input type="hidden" name="charId" value="{$cId}">
+                            <input type="hidden" name="userId" value="{$userId}">
+                            <button class="btn" type="submit">Init Guardian Armor (index 0)</button>
+                        </form>
+                        <form method="post" action="char/set-armor-index" style="display:inline;display:flex;gap:4px;align-items:center">
+                            <input type="hidden" name="charId" value="{$cId}">
+                            <input type="hidden" name="userId" value="{$userId}">
+                            <input type="number" name="armorIndex" placeholder="index" min="0" max="97" style="width:70px">
+                            <input type="number" name="armorValue" placeholder="value" min="0" max="35" style="width:70px">
+                            <button class="btn" type="submit">Set Index</button>
+                        </form>
+                    </div>
+                </div>
                 <div style="border-top:1px solid #3a2510;margin-top:16px;padding-top:16px">
                     <p style="color:#f0a500;font-size:.9rem;margin-bottom:10px">Give Item</p>
                     <div style="display:flex;gap:8px;margin-bottom:6px">
@@ -498,6 +518,46 @@ class AdminController extends Controller {
             'description'  => $i->description,
             'maxStackSize' => $i->maxStackSize,
         ], $items);
+    }
+
+    #[Request(endpoint: '/admin/char/init-guardian-armor', inputType: Input::FORM, outputType: Output::HTML)]
+    public function initGuardianArmor(array $input): string {
+        if ($guard = $this->requireAuth()) return $guard;
+
+        $charId = (int)($input['charId'] ?? 0);
+        $userId = (int)($input['userId'] ?? 0);
+
+        try {
+            $this->adminService->initGuardianArmor($charId);
+            $_SESSION['flash'] = ['type' => 'ok', 'msg' => "Guardian armor initialized for character #{$charId}."];
+        } catch (\Throwable $e) {
+            $_SESSION['flash'] = ['type' => 'error', 'msg' => 'Failed: ' . \htmlspecialchars($e->getMessage())];
+        }
+
+        \http_response_code(302);
+        \header("Location: ../../user?id={$userId}");
+        return '';
+    }
+
+    #[Request(endpoint: '/admin/char/set-armor-index', inputType: Input::FORM, outputType: Output::HTML)]
+    public function setArmorIndex(array $input): string {
+        if ($guard = $this->requireAuth()) return $guard;
+
+        $charId = (int)($input['charId'] ?? 0);
+        $userId = (int)($input['userId'] ?? 0);
+        $index  = (int)($input['armorIndex'] ?? 0);
+        $value  = (int)($input['armorValue'] ?? 0);
+
+        try {
+            $this->adminService->setArmorIndex($charId, $index, $value);
+            $_SESSION['flash'] = ['type' => 'ok', 'msg' => "Armor string index {$index} set to {$value} for character #{$charId}."];
+        } catch (\Throwable $e) {
+            $_SESSION['flash'] = ['type' => 'error', 'msg' => 'Failed: ' . \htmlspecialchars($e->getMessage())];
+        }
+
+        \http_response_code(302);
+        \header("Location: ../../user?id={$userId}");
+        return '';
     }
 
     #[Request(endpoint: '/admin/char/give-item', inputType: Input::FORM, outputType: Output::HTML)]

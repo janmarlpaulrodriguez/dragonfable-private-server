@@ -62,6 +62,24 @@ class AdminService extends Service {
         }
     }
 
+    public function initGuardianArmor(int $charId): void {
+        $char = $this->characterModel->getById($charId);
+        $armor = $char->armor;
+        // Index 0 in strArmor: 1 = male guardian armor, 2 = female guardian armor
+        $armorValue = ($char->gender === 'F') ? '2' : '1';
+        $armor[0] = $armorValue;
+        $this->storage->update('char', ['id' => $charId, 'armor' => $armor]);
+    }
+
+    public function setArmorIndex(int $charId, int $index, int $value): void {
+        $char = $this->characterModel->getById($charId);
+        $armor = $char->armor;
+        if ($index >= 0 && $index < \strlen($armor)) {
+            $armor[$index] = \strtoupper(\base_convert((string)$value, 10, 36));
+            $this->storage->update('char', ['id' => $charId, 'armor' => $armor]);
+        }
+    }
+
     public function updateUser(int $userId, array $fields): void {
         $allowed = ['upgraded', 'special', 'banned', 'activated'];
         $update = ['id' => $userId];

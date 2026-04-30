@@ -70,7 +70,7 @@ class UserVO extends ValueObject implements Bannable {
 
     public int $upgradedFlag { // this flag is how many chars is upgraded, but 2 to 5 is same as 0
         get {
-            if($this->upgraded) {
+            if($this->upgraded || $this->special) {
                 if($this->settings->canDeleteUpgradedChar) {
                     return 6; // user upgraded entire account, all chars can be deleted and new chars will be upgraded
                 }
