@@ -330,6 +330,37 @@ class AdminController extends Controller {
                     </div>
                 </div>
                 <div style="border-top:1px solid #362818;margin-top:20px;padding-top:20px">
+                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Quick Add (Resources)</p>
+                    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 495, 'Defender\'s Medal')">Defender's Medal</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 864, 'Elemental Essence')">Elemental Essence</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 1303, 'Unlucky Doom Essence')">Unlucky Doom Essence</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 1680, 'Shadow Shard')">Shadow Shard</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 1500, 'Wind Seal Fragment')">Wind Seal Fragment</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 469, 'Token of Affection')">Token of Affection</button>
+                    </div>
+
+                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Quick Actions (Currencies)</p>
+                    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+                        <form method="POST" action="char/update" style="display:inline">
+                            <input type="hidden" name="charId" value="{$cId}">
+                            <input type="hidden" name="userId" value="{$userId}">
+                            <input type="hidden" name="gold" value="1000000">
+                            <button type="submit" class="btn" style="background:#d4af37; color:black; font-weight:bold; font-size:0.85rem">Set 1M Gold</button>
+                        </form>
+                        <form method="POST" action="char/update" style="display:inline">
+                            <input type="hidden" name="charId" value="{$cId}">
+                            <input type="hidden" name="userId" value="{$userId}">
+                            <input type="hidden" name="coins" value="10000">
+                            <button type="submit" class="btn" style="background:#00d4ff; color:black; font-weight:bold; font-size:0.85rem">Set 10k DC</button>
+                        </form>
+                        <form method="POST" action="char/update" style="display:inline">
+                            <input type="hidden" name="charId" value="{$cId}">
+                            <input type="hidden" name="userId" value="{$userId}">
+                            <input type="hidden" name="dragonAmulet" value="1">
+                            <button type="submit" class="btn" style="background:#7000ff; color:white; font-weight:bold; font-size:0.85rem">Give DA</button>
+                        </form>
+                    </div>
 
                     <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Give Item</p>
                     <div style="display:flex;gap:10px;margin-bottom:8px">
