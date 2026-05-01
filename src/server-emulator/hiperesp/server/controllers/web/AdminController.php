@@ -116,7 +116,9 @@ class AdminController extends Controller {
                 box.style.display = 'block';
             }, 250);
         }
+        let dfSelectedItem = {};
         function dfSelectItem(cId, itemId, itemName) {
+            dfSelectedItem[cId] = itemName;
             const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
             document.getElementById('isearch-' + cId).value = itemName;
             document.getElementById('iresults-' + cId).style.display = 'none';
@@ -126,16 +128,25 @@ class AdminController extends Controller {
             document.getElementById('igive-' + cId).style.display = '';
             document.getElementById('igive-' + cId).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+        function dfUpdateQty(cId) {
+            const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
+            const hidden = document.getElementById('iqtyhidden-' + cId);
+            if (hidden) hidden.value = qty;
+            const nameSpan = document.getElementById('iname-' + cId);
+            if (nameSpan && dfSelectedItem[cId]) {
+                nameSpan.textContent = 'Give "' + dfSelectedItem[cId] + '" × ' + qty + '?';
+            }
+        }
         function dfGiveByID(cId) {
             const itemId = prompt("Enter Item ID to give:");
             if (!itemId) return;
-            const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
             dfSelectItem(cId, itemId, "Item ID #" + itemId);
         }
         function dfCancelGive(cId) {
             document.getElementById('igive-' + cId).style.display = 'none';
             document.getElementById('isearch-' + cId).value = '';
             document.getElementById('iresults-' + cId).style.display = 'none';
+            delete dfSelectedItem[cId];
         }
 
         </script>
@@ -328,7 +339,7 @@ class AdminController extends Controller {
                     <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Give Item</p>
                     <div style="display:flex;gap:10px;margin-bottom:8px">
                         <input type="text" id="isearch-{$cId}" placeholder="Search item name…" oninput="dfSearchItems({$cId})" autocomplete="off" style="flex:1">
-                        <input type="number" id="iqty-{$cId}" value="1" min="1" max="10000" style="width:100px" placeholder="Qty">
+                        <input type="number" id="iqty-{$cId}" value="1" min="1" max="10000" style="width:100px" placeholder="Qty" oninput="dfUpdateQty({$cId})">
                         <button type="button" class="btn" onclick="dfGiveByID({$cId})" title="Give by Item ID">By ID</button>
                     </div>
                     <div id="iresults-{$cId}" style="background:#0a0704;border:1px solid #4a3825;border-radius:6px;max-height:220px;overflow-y:auto;display:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
