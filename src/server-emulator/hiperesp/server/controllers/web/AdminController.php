@@ -336,6 +336,15 @@ class AdminController extends Controller {
                         <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 3540, 'Shadow Token')">Shadow Token</button>
                     </div>
 
+                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Merge Components</p>
+                    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 864, 'Elemental Essence')">Elemental Essence</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 913, 'Unlucky Doom Essence')">Unlucky Doom Essence</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 14975, 'Shadow Shard')">Shadow Shard</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 817, 'Wind Seal Fragment')">Wind Seal Fragment</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 707, 'Token of Affection')">Token of Affection</button>
+                    </div>
+
                     <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Give Item</p>
                     <div style="display:flex;gap:10px;margin-bottom:8px">
                         <input type="text" id="isearch-{$cId}" placeholder="Search item name…" oninput="dfSearchItems({$cId})" autocomplete="off" style="flex:1">
