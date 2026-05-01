@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rtk find *)",
+      "Bash(rtk ls *)",
+      "Bash(rtk git *)",
+      "Bash(git -C /Users/janmarlrodriguez/Projects/DragonFable-Private-Server ls-files)",
+      "Bash(ssh *)",
+      "Bash(ssh-keygen -R 192.168.1.8)",
+      "Bash(sshpass *)",
+      "Bash(echo \"Build started in background \\(PID $!\\)\")",
+      "Bash(rtk read *)",
+      "Bash(rtk grep *)",
+      "Bash(xargs ls *)",
+      "Bash(break)",
+      "Bash(xargs cat *)",
+      "Bash(rtk curl *)",
+      "Bash(python3 *)",
+      "Bash(rtk docker *)",
+      "Bash(rtk trust *)",
+      "Bash(~/.cargo/bin/rtk --version)",
+      "Bash(~/.cargo/bin/rtk docker *)",
+      "Bash(export PATH=\"$HOME/.cargo/bin:$PATH\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(xxd /Users/janmarlrodriguez/Projects/DragonFable-Private-Server/src/cdn/gamefiles/game15_9_47-patched.swf)",
+      "Bash(php -l /Users/janmarlrodriguez/Projects/DragonFable-Private-Server/src/server-emulator/hiperesp/server/services/AdminService.php)",
+      "Bash(php -l /Users/janmarlrodriguez/Projects/DragonFable-Private-Server/src/server-emulator/hiperesp/server/controllers/web/AdminController.php)",
+      "Bash(php *)",
+      "Bash(rtk proxy *)",
+      "Bash(echo \"exit: $?\")"
+    ]
+  }
+}
