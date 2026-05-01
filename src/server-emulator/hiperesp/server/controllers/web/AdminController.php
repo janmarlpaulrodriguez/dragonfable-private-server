@@ -52,44 +52,49 @@ class AdminController extends Controller {
         <title>{$title} — DFPS Admin</title>
         <style>
             *{box-sizing:border-box;margin:0;padding:0}
-            body{font-family:system-ui,sans-serif;background:#0f0a02;color:#e8d9b0;min-height:100vh}
-            a{color:#f0a500;text-decoration:none}a:hover{text-decoration:underline}
-            header{background:#1a1208;border-bottom:2px solid #5a3a10;padding:12px 24px;display:flex;align-items:center;gap:16px}
-            header h1{font-size:1.2rem;color:#f0a500;flex:1}
-            .container{max-width:960px;margin:32px auto;padding:0 16px}
-            .card{background:#1a1208;border:1px solid #3a2510;border-radius:8px;padding:20px;margin-bottom:20px}
-            .card h2{color:#f0a500;margin-bottom:16px;font-size:1.1rem;border-bottom:1px solid #3a2510;padding-bottom:8px}
-            table{width:100%;border-collapse:collapse}
-            th,td{padding:8px 12px;text-align:left;border-bottom:1px solid #2a1a08}
-            th{color:#f0a500;font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
-            tr:hover{background:#221508}
-            input[type=text],input[type=number],input[type=password],input[type=email],textarea,select{background:#0f0a02;border:1px solid #3a2510;color:#e8d9b0;padding:6px 10px;border-radius:4px;width:100%}
-            input:focus,textarea:focus,select:focus{outline:1px solid #f0a500}
-            textarea{resize:vertical;min-height:60px}
-            .btn{background:#5a3a10;color:#e8d9b0;border:none;padding:7px 16px;border-radius:4px;cursor:pointer;font-size:.9rem}
-            .btn:hover{background:#7a5a20}
-            .btn-danger{background:#6b1a1a;color:#e8d9b0;border:none;padding:7px 16px;border-radius:4px;cursor:pointer;font-size:.9rem}
-            .btn-danger:hover{background:#8b2a2a}
-            .btn-success{background:#1a4a1a;color:#e8d9b0;border:none;padding:7px 16px;border-radius:4px;cursor:pointer;font-size:.9rem}
-            .btn-success:hover{background:#2a6a2a}
-            .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-            .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-            .field{margin-bottom:12px}
-            .field label{display:block;font-size:.85rem;color:#a89060;margin-bottom:4px}
-            .field-hint{font-size:.78rem;color:#7a6040;margin-top:3px}
-            .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.78rem}
-            .badge-da{background:#4a2a80;color:#d0a0ff}
-            .badge-upgraded{background:#1a4a1a;color:#80ff80}
-            .badge-banned{background:#6b1a1a;color:#ff8080}
-            .badge-free{background:#2a2a2a;color:#a0a0a0}
-            .flash{padding:10px 16px;border-radius:4px;margin-bottom:16px;background:#2a4a1a;border:1px solid #4a6a2a;color:#a0d080}
-            .flash.error{background:#4a1a1a;border-color:#6a2a2a;color:#d08080}
-            .search-row{display:flex;gap:8px;margin-bottom:16px}
+            body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#0d0905;color:#e2d1a3;min-height:100vh;line-height:1.5}
+            a{color:#ffb347;text-decoration:none;transition:color 0.2s}a:hover{color:#ffd28e;text-decoration:none}
+            header{background:linear-gradient(180deg, #1c140a 0%, #150f07 100%);border-bottom:2px solid #4a3215;padding:14px 28px;display:flex;align-items:center;gap:20px;box-shadow:0 4px 12px rgba(0,0,0,0.5)}
+            header h1{font-size:1.3rem;color:#ffb347;flex:1;font-weight:700;letter-spacing:-0.01em}
+            header a{font-size:0.95rem;font-weight:500;color:#c0a080}header a:hover{color:#ffb347}
+            .container{max-width:1080px;margin:32px auto;padding:0 24px}
+            .card{background:#181109;border:1px solid #362818;border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+            .card h2{color:#ffb347;margin-bottom:20px;font-size:1.2rem;border-bottom:1px solid #362818;padding-bottom:12px;font-weight:600}
+            table{width:100%;border-collapse:separate;border-spacing:0}
+            th,td{padding:12px 16px;text-align:left;border-bottom:1px solid #2a1f12}
+            th{color:#8a7050;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700}
+            tr:hover td{background:#20170c}
+            tr:last-child td{border-bottom:none}
+            input[type=text],input[type=number],input[type=password],input[type=email],textarea,select{background:#0a0704;border:1px solid #4a3825;color:#e2d1a3;padding:8px 12px;border-radius:6px;width:100%;transition:border-color 0.2s, box-shadow 0.2s;font-size:0.95rem}
+            input:focus,textarea:focus,select:focus{outline:none;border-color:#ffb347;box-shadow:0 0 0 2px rgba(255,179,71,0.1)}
+            textarea{resize:vertical;min-height:80px}
+            .btn{background:#4a3215;color:#e2d1a3;border:1px solid #634621;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:.9rem;font-weight:600;transition:all 0.2s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+            .btn:hover{background:#5c401c;border-color:#7a5a2d;transform:translateY(-1px)}
+            .btn:active{transform:translateY(0)}
+            .btn-danger{background:#5a1818;color:#ffd0d0;border:1px solid #7a2525}
+            .btn-danger:hover{background:#7a2525;border-color:#9a3535}
+            .btn-success{background:#1a3d1a;color:#d0ffd0;border:1px solid #2a5a2a}
+            .btn-success:hover{background:#2a5a2a;border-color:#3a7a3a}
+            .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+            .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+            .field{margin-bottom:16px}
+            .field label{display:block;font-size:.85rem;color:#a08a6a;margin-bottom:6px;font-weight:600}
+            .field-hint{font-size:.8rem;color:#6b5842;margin-top:4px}
+            .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.02em}
+            .badge-da{background:rgba(74,42,128,0.2);color:#d0a0ff;border:1px solid rgba(130,80,255,0.3)}
+            .badge-upgraded{background:rgba(26,74,26,0.2);color:#80ff80;border:1px solid rgba(50,150,50,0.3)}
+            .badge-banned{background:rgba(107,26,26,0.2);color:#ff8080;border:1px solid rgba(200,50,50,0.3)}
+            .badge-free{background:rgba(42,42,42,0.2);color:#a0a0a0;border:1px solid rgba(100,100,100,0.3)}
+            .flash{padding:12px 20px;border-radius:8px;margin-bottom:24px;background:#1a2a1a;border:1px solid #2a4a2a;color:#a0d080;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
+            .flash.error{background:#2a1a1a;border-color:#4a2a2a;color:#d08080}
+            .search-row{display:flex;gap:10px;margin-bottom:20px}
             .search-row input{flex:1}
-            .toggle-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #2a1a08}
+            .toggle-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #2a1f12}
             .toggle-row:last-child{border-bottom:none}
-            .toggle-row label{flex:1;cursor:pointer}
-            .toggle-row .hint{font-size:.78rem;color:#7a6040}
+            .toggle-row label{flex:1;cursor:pointer;font-weight:500}
+            .toggle-row .hint{font-size:.8rem;color:#6b5842}
+            @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
         </style>
         <script>
         let dfSearchTimer = {};
@@ -119,12 +124,20 @@ class AdminController extends Controller {
             document.getElementById('iqtyhidden-' + cId).value = qty;
             document.getElementById('iname-' + cId).textContent = 'Give "' + itemName + '" × ' + qty + '?';
             document.getElementById('igive-' + cId).style.display = '';
+            document.getElementById('igive-' + cId).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        function dfGiveByID(cId) {
+            const itemId = prompt("Enter Item ID to give:");
+            if (!itemId) return;
+            const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
+            dfSelectItem(cId, itemId, "Item ID #" + itemId);
         }
         function dfCancelGive(cId) {
             document.getElementById('igive-' + cId).style.display = 'none';
             document.getElementById('isearch-' + cId).value = '';
             document.getElementById('iresults-' + cId).style.display = 'none';
         }
+
         </script>
         </head>
         <body>
@@ -302,25 +315,36 @@ class AdminController extends Controller {
                         </form>
                     </div>
                 </div>
-                <div style="border-top:1px solid #3a2510;margin-top:16px;padding-top:16px">
-                    <p style="color:#f0a500;font-size:.9rem;margin-bottom:10px">Give Item</p>
-                    <div style="display:flex;gap:8px;margin-bottom:6px">
-                        <input type="text" id="isearch-{$cId}" placeholder="Search item name…" oninput="dfSearchItems({$cId})" autocomplete="off">
-                        <input type="number" id="iqty-{$cId}" value="1" min="1" max="10000" style="width:80px">
+                <div style="border-top:1px solid #362818;margin-top:20px;padding-top:20px">
+                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Quick Add Medals & Resources</p>
+                    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 495, 'Defender\'s Medal')">Defender's Medal</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 18514, 'Timewarped Medal')">Timewarped Medal</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 19272, 'Proclamation Medal (SH)')">Proclamation Medal (SH)</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 19924, 'Proclamation Medal (DW)')">Proclamation Medal (DW)</button>
+                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 3540, 'Shadow Token')">Shadow Token</button>
                     </div>
-                    <div id="iresults-{$cId}" style="border:1px solid #3a2510;border-radius:4px;max-height:180px;overflow-y:auto;display:none"></div>
-                    <form method="post" action="char/give-item" id="igive-{$cId}" style="display:none;margin-top:8px">
+
+                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Give Item</p>
+                    <div style="display:flex;gap:10px;margin-bottom:8px">
+                        <input type="text" id="isearch-{$cId}" placeholder="Search item name…" oninput="dfSearchItems({$cId})" autocomplete="off" style="flex:1">
+                        <input type="number" id="iqty-{$cId}" value="1" min="1" max="10000" style="width:100px" placeholder="Qty">
+                        <button type="button" class="btn" onclick="dfGiveByID({$cId})" title="Give by Item ID">By ID</button>
+                    </div>
+                    <div id="iresults-{$cId}" style="background:#0a0704;border:1px solid #4a3825;border-radius:6px;max-height:220px;overflow-y:auto;display:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
+                    <form method="post" action="char/give-item" id="igive-{$cId}" style="display:none;margin-top:12px">
                         <input type="hidden" name="charId" value="{$cId}">
                         <input type="hidden" name="userId" value="{$userId}">
                         <input type="hidden" name="itemId" id="iid-{$cId}">
                         <input type="hidden" name="quantity" id="iqtyhidden-{$cId}">
-                        <div style="display:flex;align-items:center;gap:8px;background:#221508;padding:8px 12px;border-radius:4px">
-                            <span id="iname-{$cId}" style="flex:1;font-size:.9rem"></span>
-                            <button type="submit" class="btn-success btn">Give</button>
-                            <button type="button" class="btn" onclick="dfCancelGive({$cId})">✕</button>
+                        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,179,71,0.05);border:1px solid rgba(255,179,71,0.2);padding:10px 16px;border-radius:8px">
+                            <span id="iname-{$cId}" style="flex:1;font-size:.95rem;font-weight:500;color:#ffb347"></span>
+                            <button type="submit" class="btn btn-success">Confirm Give</button>
+                            <button type="button" class="btn" onclick="dfCancelGive({$cId})">Cancel</button>
                         </div>
                     </form>
                 </div>
+
             </div>
             HTML;
         }
