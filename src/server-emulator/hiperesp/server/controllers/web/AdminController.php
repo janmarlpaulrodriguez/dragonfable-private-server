@@ -117,25 +117,28 @@ class AdminController extends Controller {
             }, 250);
         }
         let dfSelectedItem = {};
-        function dfSelectItem(cId, itemId, itemName) {
-            dfSelectedItem[cId] = itemName;
-            const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
-            document.getElementById('isearch-' + cId).value = itemName;
-            document.getElementById('iresults-' + cId).style.display = 'none';
-            document.getElementById('iid-' + cId).value = itemId;
-            document.getElementById('iqtyhidden-' + cId).value = qty;
-            document.getElementById('iname-' + cId).textContent = 'Give "' + itemName + '" × ' + qty + '?';
-            document.getElementById('igive-' + cId).style.display = '';
-            document.getElementById('igive-' + cId).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
         function dfUpdateQty(cId) {
-            const qty = parseInt(document.getElementById('iqty-' + cId).value) || 1;
+            const qtyInput = document.getElementById('iqty-' + cId);
+            const qty = parseInt(qtyInput.value) || 1;
             const hidden = document.getElementById('iqtyhidden-' + cId);
             if (hidden) hidden.value = qty;
             const nameSpan = document.getElementById('iname-' + cId);
             if (nameSpan && dfSelectedItem[cId]) {
                 nameSpan.textContent = 'Give "' + dfSelectedItem[cId] + '" × ' + qty + '?';
             }
+        }
+
+        function dfSelectItem(cId, itemId, itemName) {
+            dfSelectedItem[cId] = itemName;
+            const qtyInput = document.getElementById('iqty-' + cId);
+            const qty = parseInt(qtyInput.value) || 1;
+            document.getElementById('isearch-' + cId).value = itemName;
+            document.getElementById('iresults-' + cId).style.display = 'none';
+            document.getElementById('iid-' + cId).value = itemId;
+            document.getElementById('iqtyhidden-' + cId).value = qty;
+            document.getElementById('iname-' + cId).textContent = 'Give "' + itemName + '" × ' + qty + '?';
+            document.getElementById('igive-' + cId).style.display = 'block';
+            document.getElementById('igive-' + cId).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         function dfGiveByID(cId) {
             const itemId = prompt("Enter Item ID to give:");
@@ -327,23 +330,6 @@ class AdminController extends Controller {
                     </div>
                 </div>
                 <div style="border-top:1px solid #362818;margin-top:20px;padding-top:20px">
-                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Quick Add Medals & Resources</p>
-                    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 495, 'Defender\'s Medal')">Defender's Medal</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 18514, 'Timewarped Medal')">Timewarped Medal</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 19272, 'Proclamation Medal (SH)')">Proclamation Medal (SH)</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 19924, 'Proclamation Medal (DW)')">Proclamation Medal (DW)</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 3540, 'Shadow Token')">Shadow Token</button>
-                    </div>
-
-                    <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Merge Components</p>
-                    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 864, 'Elemental Essence')">Elemental Essence</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 913, 'Unlucky Doom Essence')">Unlucky Doom Essence</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 14975, 'Shadow Shard')">Shadow Shard</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 817, 'Wind Seal Fragment')">Wind Seal Fragment</button>
-                        <button type="button" class="btn" style="font-size:0.8rem;padding:5px 12px" onclick="dfSelectItem({$cId}, 707, 'Token of Affection')">Token of Affection</button>
-                    </div>
 
                     <p style="color:#ffb347;font-size:.9rem;margin-bottom:12px;font-weight:600">Give Item</p>
                     <div style="display:flex;gap:10px;margin-bottom:8px">
@@ -356,7 +342,7 @@ class AdminController extends Controller {
                         <input type="hidden" name="charId" value="{$cId}">
                         <input type="hidden" name="userId" value="{$userId}">
                         <input type="hidden" name="itemId" id="iid-{$cId}">
-                        <input type="hidden" name="quantity" id="iqtyhidden-{$cId}">
+                        <input type="hidden" name="quantity" id="iqtyhidden-{$cId}" value="1">
                         <div style="display:flex;align-items:center;gap:12px;background:rgba(255,179,71,0.05);border:1px solid rgba(255,179,71,0.2);padding:10px 16px;border-radius:8px">
                             <span id="iname-{$cId}" style="flex:1;font-size:.95rem;font-weight:500;color:#ffb347"></span>
                             <button type="submit" class="btn btn-success">Confirm Give</button>

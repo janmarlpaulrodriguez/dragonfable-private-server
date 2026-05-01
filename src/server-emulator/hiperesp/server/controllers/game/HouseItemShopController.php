@@ -19,9 +19,9 @@ class HouseItemShopController extends Controller {
         outputType: Output::XML
     )]
     public function load(\SimpleXMLElement $input): \SimpleXMLElement {
-        $shop = $this->houseItemShopService->getShop((int)$input->intShopID);
+        $shop = $this->houseItemShopService->getShop((int)$input->intHouseItemShopID);
         if ($shop == null) {
-            return new \SimpleXMLElement('<houseshop><shop ShopID="0" strCharacterName="Shop Not Found"/></houseshop>');
+            return new \SimpleXMLElement('<houseitemshop><houseitemshop houseItemShopID="0" strName="Shop Not Found"/></houseitemshop>');
         }
         return HouseItemShopProjection::instance()->loaded($shop);
     }

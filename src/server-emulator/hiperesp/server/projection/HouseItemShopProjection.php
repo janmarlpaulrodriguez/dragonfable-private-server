@@ -7,15 +7,16 @@ class HouseItemShopProjection extends Projection {
 
     public function loaded(HouseItemShopVO $shop): \SimpleXMLElement {
 
-        $xml = new \SimpleXMLElement('<houseshop/>');
-        $shopEl = $xml->addChild('shop');
-        $shopEl->addAttribute('ShopID', $shop->id);
-        $shopEl->addAttribute('strCharacterName', $shop->name);
+        $xml = new \SimpleXMLElement('<houseitemshop/>');
+        $shopEl = $xml->addChild('houseitemshop');
+        $shopEl->addAttribute('houseItemShopID', $shop->id);
+        $shopEl->addAttribute('strName', $shop->name);
+        $shopEl->addAttribute('intCount', -100);
 
         foreach($shop->getItems() as $item) {
-            $itemEl = $shopEl->addChild('sItems');
+            $itemEl = $shopEl->addChild('houseitems');
 
-            $itemEl->addAttribute('ItemID', $item->id);
+            $itemEl->addAttribute('HouseItemID', $item->id);
             $itemEl->addAttribute('strItemName', $item->name);
             $itemEl->addAttribute('strItemDescription', $item->description);
             $itemEl->addAttribute('bitVisible', $item->visible);
@@ -33,9 +34,10 @@ class HouseItemShopProjection extends Projection {
             $itemEl->addAttribute('intMaxLevel', $item->maxLevel);
             $itemEl->addAttribute('intCategory', $item->category);
             $itemEl->addAttribute('intEquipSpot', $item->equipSpot);
-            $itemEl->addAttribute('strType', $item->type);
+            $itemEl->addAttribute('intType', 1); // Reference says intType but I see strType too
             $itemEl->addAttribute('bitRandom', $item->random);
             $itemEl->addAttribute('intElement', $item->element);
+            $itemEl->addAttribute('strType', $item->type);
             $itemEl->addAttribute('strFileName', $item->swf);
 
         }

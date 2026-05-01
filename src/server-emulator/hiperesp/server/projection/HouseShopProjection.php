@@ -7,45 +7,46 @@ class HouseShopProjection extends Projection {
 
     public function loaded(HouseShopVO $shop): \SimpleXMLElement {
 
-        $xml = new \SimpleXMLElement('<houseshop/>');
+        $xml = new \SimpleXMLElement('<shop/>');
         $shopEl = $xml->addChild('shop');
         $shopEl->addAttribute('ShopID', $shop->id);
         $shopEl->addAttribute('strCharacterName', $shop->name);
+        $shopEl->addAttribute('intCount', -100);
 
-        foreach($shop->getHouses() as $item) {
-            $itemEl = $shopEl->addChild('sHouses');
+        foreach($shop->getHouses() as $house) {
+            $houseEl = $shopEl->addChild('sHouses');
 
-            $itemEl->addAttribute('HouseID', $item->id);
-            $itemEl->addAttribute('strHouseName', $item->name);
-            $itemEl->addAttribute('strHouseDescription', $item->description);
-            $itemEl->addAttribute('bitVisible', $item->visible);
-            $itemEl->addAttribute('bitDestroyable', $item->destroyable);
-            $itemEl->addAttribute('bitEquippable', $item->equippable);
-            $itemEl->addAttribute('bitRandomDrop', $item->randomDrop);
-            $itemEl->addAttribute('bitSellable', $item->sellable);
-            $itemEl->addAttribute('bitDragonAmulet', $item->dragonAmulet);
-            $itemEl->addAttribute('bitEnc', $item->enc);
-            $itemEl->addAttribute('intCost', $item->cost);
-            $itemEl->addAttribute('intCurrency', $item->currency);
-            $itemEl->addAttribute('intRarity', $item->rarity);
-            $itemEl->addAttribute('intLevel', $item->level);
-            $itemEl->addAttribute('intCategory', $item->category);
-            $itemEl->addAttribute('intEquipSpot', $item->equipSpot);
-            $itemEl->addAttribute('intType', $item->type);
-            $itemEl->addAttribute('bitRandom', $item->random);
-            $itemEl->addAttribute('intElement', $item->element);
-            $itemEl->addAttribute('strType', $item->type);
-            $itemEl->addAttribute('strIcon', $item->icon);
-            $itemEl->addAttribute('strDesignInfo', $item->designInfo);
-            $itemEl->addAttribute('strFileName', $item->swf);
-            $itemEl->addAttribute('intRegion', $item->region);
-            $itemEl->addAttribute('intTheme', $item->theme);
-            $itemEl->addAttribute('intSize', $item->size);
-            $itemEl->addAttribute('intBaseHP', $item->baseHP);
-            $itemEl->addAttribute('intStorageSize', $item->storageSize);
-            $itemEl->addAttribute('intMaxGuards', $item->maxGuards);
-            $itemEl->addAttribute('intMaxRooms', $item->maxRooms);
-            $itemEl->addAttribute('intMaxExtItems', $item->maxExtItems);
+            $houseEl->addAttribute('HouseID', $house->id);
+            $houseEl->addAttribute('strHouseName', $house->name);
+            $houseEl->addAttribute('strHouseDescription', $house->description);
+            $houseEl->addAttribute('bitVisible', $house->visible);
+            $houseEl->addAttribute('bitDestroyable', $house->destroyable);
+            $houseEl->addAttribute('bitEquippable', $house->equippable);
+            $houseEl->addAttribute('bitRandomDrop', $house->randomDrop);
+            $houseEl->addAttribute('bitSellable', $house->sellable);
+            $houseEl->addAttribute('bitDragonAmulet', $house->dragonAmulet);
+            $houseEl->addAttribute('bitEnc', $house->enc);
+            $houseEl->addAttribute('intCost', $house->cost);
+            $houseEl->addAttribute('intCurrency', $house->currency);
+            $houseEl->addAttribute('intRarity', $house->rarity);
+            $houseEl->addAttribute('intLevel', $house->level);
+            $houseEl->addAttribute('intCategory', $house->category);
+            $houseEl->addAttribute('intEquipSpot', $house->equipSpot);
+            $houseEl->addAttribute('intType', $house->type);
+            $houseEl->addAttribute('bitRandom', $house->random);
+            $houseEl->addAttribute('intElement', $house->element);
+            $houseEl->addAttribute('strType', $house->strType);
+            $houseEl->addAttribute('strIcon', $house->icon);
+            $houseEl->addAttribute('strDesignInfo', $house->designInfo);
+            $houseEl->addAttribute('strFileName', $house->swf);
+            $houseEl->addAttribute('intRegion', $house->region);
+            $houseEl->addAttribute('intTheme', $house->theme);
+            $houseEl->addAttribute('intSize', $house->size);
+            $houseEl->addAttribute('intBaseHP', $house->baseHP);
+            $houseEl->addAttribute('intStorageSize', $house->storageSize);
+            $houseEl->addAttribute('intMaxGuards', $house->maxGuards);
+            $houseEl->addAttribute('intMaxRooms', $house->maxRooms);
+            $houseEl->addAttribute('intMaxExtItems', $house->maxExtItems);
 
         }
 
