@@ -51,6 +51,7 @@ class DFException extends \Exception {
     private int $httpStatus;
 
     public function __construct(string $dfCode) {
+        \error_log("DFException thrown: " . $dfCode);
         if(!isset(self::$knownExceptions[$dfCode])) {
             $dfCode = self::INVALID_REFERENCE;
         }

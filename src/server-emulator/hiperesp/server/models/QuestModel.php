@@ -10,10 +10,12 @@ class QuestModel extends Model {
     const COLLECTION = 'quest';
 
     public function getById(int $questId): QuestVO {
+        \error_log("QuestModel::getById - questId: " . $questId);
         $quest = $this->storage->select(self::COLLECTION, ['id' => $questId]);
         if(isset($quest[0]) && $quest = $quest[0]) {
             return new QuestVO($quest);
         }
+        \error_log("QuestModel::getById - QUEST_NOT_FOUND for questId: " . $questId);
         throw new DFException(DFException::QUEST_NOT_FOUND);
     }
 

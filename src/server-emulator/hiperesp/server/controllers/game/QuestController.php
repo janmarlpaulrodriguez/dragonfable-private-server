@@ -22,9 +22,12 @@ class QuestController extends Controller {
         outputType: Output::XML
     )]
     public function load(\SimpleXMLElement $input): \SimpleXMLElement {
+        \error_log("QuestController::load - input: " . \json_encode($input));
         $char = $this->characterService->auth($input);
 
-        $quest = $this->questService->load((int)$input->intQuestID);
+        $questId = (int)$input->intQuestID;
+        \error_log("QuestController::load - questId: " . $questId);
+        $quest = $this->questService->load($questId);
 
         return QuestProjection::instance()->loaded($quest);
     }
