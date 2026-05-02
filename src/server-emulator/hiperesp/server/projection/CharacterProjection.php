@@ -194,7 +194,7 @@ class CharacterProjection extends Projection {
             $dragonEl = $charEl->addChild('dragon');
             $dragonEl->addAttribute('idCore_CharDragons', $dragon['id']);
             $dragonEl->addAttribute('strName', $dragon['name']);
-            $dragonEl->addAttribute('dateLastFed', \date('Y-m-d\TH:i:s', \strtotime($dragon['lastFed'])));
+            $dragonEl->addAttribute('dateLastFed', "2000-01-01T00:00:00");
             $dragonEl->addAttribute('intGrowthLevel', $dragon['growthLevel']);
             $dragonEl->addAttribute('intTotalStats', $dragon['totalStats']);
             $dragonEl->addAttribute('intHeal', $dragon['heal']);

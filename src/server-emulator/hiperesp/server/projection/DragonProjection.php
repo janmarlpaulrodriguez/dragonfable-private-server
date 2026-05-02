@@ -15,7 +15,7 @@ class DragonProjection extends Projection {
 
         $dragonNode->addAttribute('idCore_CharDragons', $dragon['id']);
         $dragonNode->addAttribute('strName', $dragon['name']);
-        $dragonNode->addAttribute('dateLastFed', \date('Y-m-d\TH:i:s', \strtotime($dragon['lastFed'])));
+        $dragonNode->addAttribute('dateLastFed', "2000-01-01T00:00:00");
         $dragonNode->addAttribute('intGrowthLevel', $dragon['growthLevel']);
         $dragonNode->addAttribute('intTotalStats', $dragon['totalStats']);
         $dragonNode->addAttribute('intHeal', $dragon['heal']);
@@ -48,7 +48,7 @@ class DragonProjection extends Projection {
         $dragonNode = $xml->addChild('dragon');
 
         $dragonNode->addAttribute('intTotalStats', $dragon['totalStats']);
-        $dragonNode->addAttribute('dateLastFed', \date('Y-m-d\TH:i:s', \strtotime($dragon['lastFed'])));
+        $dragonNode->addAttribute('dateLastFed', "2000-01-01T00:00:00");
 
         return $xml;
     }
