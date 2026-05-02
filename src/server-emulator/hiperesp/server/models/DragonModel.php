@@ -62,22 +62,14 @@ class DragonModel extends Model {
         }
         $dragon = $this->getByChar($char);
 
-        $lastFedDate = (new \DateTime($dragon['lastFed']))->format('Y-m-d');
-        $nowDate = (new \DateTime())->format('Y-m-d');
+        $dragon['totalStats'] = min(600, $dragon['totalStats'] + $statPoints);
+        $dragon['lastFed'] = date('Y-m-d H:i:s');
 
-        if ($nowDate !== $lastFedDate) {
-            $dragon['totalStats'] = min(600, $dragon['totalStats'] + $statPoints);
-            $dragon['lastFed'] = date('Y-m-d H:i:s');
+        $item1 = $this->itemModel->getById($foodId);
+        $this->characterItemModel->removeItemFromChar($char, $item1, 1);
 
-            $item1 = $this->itemModel->getById($foodId);
-            $this->characterItemModel->removeItemFromChar($char, $item1, 1);
-
-            $this->storage->update(self::COLLECTION, $dragon);
-            return $dragon;
-        }
-        else{
-            throw new DFException(DFException::BAD_REQUEST);
-        }
+        $this->storage->update(self::COLLECTION, $dragon);
+        return $dragon;
     }
 
     public function trainDragon(CharacterVO $char, int $debuff, int $buff, int $melee, int $magic, int $heal): array {
